@@ -1,0 +1,73 @@
+[1a53da8a-a764-4e24-a908-1caf0fbf1c6a]
+Description=Application settings for steam
+clientmachine=localhost
+desktops=958cc78d-cd18-47db-adfb-16da03ad4a34
+desktopsrule=3
+position=960,38
+positionrule=3
+size=960,1042
+sizerule=3
+wmclass=steamwebhelper steam
+wmclasscomplete=true
+wmclassmatch=1
+
+[3c40098f-2d39-4f22-b448-57f3d7ef853b]
+Description=Application settings for discord
+desktops=958cc78d-cd18-47db-adfb-16da03ad4a34
+desktopsrule=3
+position=0,38
+positionrule=3
+size=960,1042
+sizerule=3
+wmclass=Discord discord
+wmclasscomplete=true
+wmclassmatch=1
+
+[62960839-42e0-4938-a806-8428cce2ef13]
+Description=Application settings for firefox
+desktops=bbd3c9dd-5433-4fb6-aed5-d00fb7db8c8f
+desktopsrule=3
+maximizehoriz=true
+maximizehorizrule=3
+maximizevert=true
+maximizevertrule=3
+wmclass=firefox
+wmclassmatch=1
+
+[General]
+Order=1a53da8a-a764-4e24-a908-1caf0fbf1c6a,ef53eff4-7a46-4883-aa60-38e3fda6bc77,3c40098f-2d39-4f22-b448-57f3d7ef853b,d65ae2b2-2f25-4e52-8c4b-b2f0bd6a0bba,bcf1be39-f9cc-46a5-b42c-bcd525ce42e9,62960839-42e0-4938-a806-8428cce2ef13
+
+[bcf1be39-f9cc-46a5-b42c-bcd525ce42e9]
+Description=Application settings for org.telegram.desktop
+desktops=b45aea8b-c2b1-4e04-af83-77cc18dea971
+desktopsrule=3
+position=0,38
+positionrule=3
+size=960,1034
+sizerule=3
+wmclass=Telegram org.telegram.desktop
+wmclasscomplete=true
+wmclassmatch=1
+
+[d65ae2b2-2f25-4e52-8c4b-b2f0bd6a0bba]
+Description=Application settings for Spotify
+clientmachine=localhost
+desktops=b45aea8b-c2b1-4e04-af83-77cc18dea971
+desktopsrule=3
+position=960,38
+positionrule=3
+size=960,1042
+sizerule=3
+wmclass=spotify Spotify
+wmclasscomplete=true
+wmclassmatch=1
+
+[ef53eff4-7a46-4883-aa60-38e3fda6bc77]
+Description=Application settings for Alacritty
+position=0,0
+positionrule=3
+size=1067,780
+sizerule=3
+wmclass=alacritty Alacritty
+wmclasscomplete=true
+wmclassmatch=1

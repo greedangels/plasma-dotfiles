@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# pre-commit: Git-хук для предотвращения коммита секретов, токенов и паролей
+# ==============================================================================
+set -euo pipefail
+
+# Регулярные выражения для поиска секретов, приватных ключей и паролей
+SENSITIVE_REGEX="(password[[:space:]]*=|passwd[[:space:]]*=|secret[[:space:]]*=|api[_-]?key|bearer[[:space:]]+[a-zA-Z0-9_\-\.]+|private[_-]?key|BEGIN[ A-Z0-9_-]*PRIVATE KEY|kwallet|auth[_-]?token|access[_-]?token)"
+SENSITIVE_FILENAMES="(kwallet|token|secret|auth|ksmserver|recentdocuments|history|kactivitymanagerd)"
+
+echo "==> [Pre-commit] Проверка индексированных файлов на безопасность..."
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+FOUND=0
+
+for file in $STAGED_FILES; do
+    # Исключаем служебные файлы репозитория и скрипты из проверки регулярных выражений
+    case "$file" in
+        README*|LICENSE*|.gitignore|.githooks/*|scripts/*|backup.sh|restore.sh)
+            continue
+            ;;
+    esac
+
+    # 1. Проверка имени файла на запрещенные паттерны
+    base_name=$(basename "$file")
+    if echo "$base_name" | grep -Ei "$SENSITIVE_FILENAMES" >/dev/null 2>&1; then
+        echo "❌ [ОТКЛОНЕНО] Запрещенное или подозрительное имя файла: '$file'"
+        FOUND=1
+    fi
+
+    # 2. Проверка содержимого файла в индексе через grep -Ei
+    MATCHES=$(git show ":$file" | grep -Ein "$SENSITIVE_REGEX" || true)
+    if [ -n "$MATCHES" ]; then
+        echo "❌ [ОТКЛОНЕНО] Обнаружены чувствительные данные в индексированном файле '$file':"
+        echo "$MATCHES"
+        echo "----------------------------------------------------"
+        FOUND=1
+    fi
+done
+
+if [ $FOUND -ne 0 ]; then
+    echo "❌ ОШИБКА: Коммит прерван! Удалите чувствительные данные или файлы перед коммитом." >&2
+    exit 1
+fi
+
+echo "✅ [Pre-commit] Проверка безопасности успешно пройдена."
+exit 0

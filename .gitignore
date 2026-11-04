@@ -1,0 +1,46 @@
+# ==============================================================================
+# .gitignore for KDE Plasma Dotfiles
+# ==============================================================================
+
+# Активности, недавние документы и история
+kactivitymanagerd*
+*recentdocuments*
+*history*
+*state*
+*.kactivitymanagerd*
+
+# Кошельки, пароли, секреты и токены
+kwallet*
+*kwallet*
+*token*
+*secret*
+*auth*
+*credential*
+*.key
+*.pem
+
+# Сессионные файлы и состояние сессии
+ksmserverrc
+*ksmserver*
+session/
+*/session/
+*session*rc
+
+# Логи, временные файлы, резервные копии и блокировки
+*.log
+*.tmp
+*.bak
+*.backup
+*.old
+*.swp
+*~
+*.lock
+*.socket
+*.pid
+kde_backup_*
+
+# Кэши и превью
+*cache*
+*.cache
+thumbnails/
+preview/
