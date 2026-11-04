@@ -1,0 +1,7 @@
+awesome-terminal-fonts
+cantarell-fonts
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+plasma-camera
+plasma-meta

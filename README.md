@@ -13,6 +13,8 @@
 │   └── pre-commit            # Хук, блокирующий коммит приватных ключей, токенов и паролей
 ├── .gitignore                # Строгий список исключений чувствительных файлов и кэша
 ├── README.md                 # Документация по установке и использованию
+├── install.sh                # Bootstrap-скрипт полного развертывания на чистой системе
+├── packages.txt              # Список пакетов оформления, шрифтов и виджетов (pacman/paru)
 ├── backup.sh                 # Скрипт синхронизации из ~/.config в репозиторий
 ├── restore.sh                # Скрипт развертывания настроек из репозитория в ~/.config
 ├── scripts/
@@ -62,56 +64,56 @@
 
 ---
 
-## 🚀 Первое развертывание на чистой системе
+## 🚀 Быстрое развертывание на чистой системе (`install.sh`)
 
-При настройке новой системы или переносе конфигурации:
+Скрипт **`install.sh`** автоматизирует все шаги развертывания под ключ:
+1. Проверяет наличие пакетного менеджера (`paru`, `yay` или `pacman`).
+2. Сравнивает список из `packages.txt` с установленными в системе и предлагает доустановить недостающие пакеты оформления, шрифтов и виджетов.
+3. Вызывает `restore.sh` для наката конфигураций (с созданием бэкапа в `~/.config/kde_backup_<timestamp>`).
+4. Корректно перезапускает сессию через `qdbus6 org.kde.KWin /KWin reconfigure` и `systemctl --user restart plasma-plasmashell`.
 
-### 1. Клонирование / перемещение репозитория
+### Запуск:
+
 ```bash
-# Клонируйте репозиторий в домашний каталог (если используется удаленный git)
-git clone <URL_РЕПОЗИТОРИЯ> ~/dotfiles/kde
 cd ~/dotfiles/kde
-```
-
-### 2. Настройка git-хуков (безопасность)
-Включите pre-commit хук из каталога репозитория:
-```bash
+chmod +x install.sh restore.sh backup.sh .githooks/pre-commit scripts/verify-security.sh
 git config core.hooksPath .githooks
-chmod +x .githooks/pre-commit scripts/verify-security.sh backup.sh restore.sh
+
+# Тестовый прогон (симуляция):
+./install.sh --dry-run
+
+# Боевая установка:
+./install.sh
+
+# Автоматическая установка без интерактивных запросов:
+./install.sh -y
 ```
 
-### 3. Проверка в режиме имитации (dry-run)
-Перед внесением изменений выполните тестовый прогон:
+---
+
+## 🔧 Ручное развертывание (`restore.sh`)
+
+Если требуется накатить только конфигурационные файлы без проверки системных пакетов:
+
 ```bash
+# Режим симуляции
 ./restore.sh --dry-run
+
+# Символические ссылки (рекомендуется)
+./restore.sh
+
+# Или копирование файлов
+./restore.sh --copy
 ```
 
-### 4. Развертывание конфигурации
-- **Вариант А: Символические ссылки (рекомендуется для синхронизации "на лету")**:
-  ```bash
-  ./restore.sh
-  ```
-- **Вариант Б: Прямое копирование файлов**:
-  ```bash
-  ./restore.sh --copy
-  ```
-> **Безопасность**: `restore.sh` автоматически сохраняет резервную копию существующих файлов в `~/.config/kde_backup_<timestamp>`.
-
-### 5. Перезапуск оболочки Plasma
-
-Для применения новых настроек без перезагрузки системы перезапустите графическую оболочку:
-
-#### Для KDE Plasma 6:
+Для ручного перезапуска компонентов оболочки:
 ```bash
-kquitapp6 plasmashell && kstart plasmashell
-# Перезагрузка оконного менеджера KWin и шорткатов:
-qdbus org.kde.KWin /KWin reconfigure
-```
+# Plasma 6
+systemctl --user restart plasma-plasmashell
+qdbus6 org.kde.KWin /KWin reconfigure
 
-#### Для KDE Plasma 5:
-```bash
+# Plasma 5
 kquitapp5 plasmashell && kstart plasmashell
-# Перезагрузка оконного менеджера KWin и шорткатов:
 qdbus org.kde.KWin /KWin reconfigure
 ```
 
@@ -128,10 +130,15 @@ qdbus org.kde.KWin /KWin reconfigure
    ```
    Скрипт покажет `diff` каждого измененного файла и скопирует обновленные версии в `config/`.
 
-2. **Просмотр изменений и фиксация в git**:
+2. **Обновление списка пакетов (при необходимости)**:
+   ```bash
+   pacman -Qqe | grep -Ei "plasma|breeze|kvantum|font" | sort -u > packages.txt
+   ```
+
+3. **Просмотр изменений и фиксация в git**:
    ```bash
    git status
    git diff
-   git add config/
+   git add config/ packages.txt
    git commit -m "style(kde): update panel widgets and shortcuts"
    ```
